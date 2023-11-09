@@ -1,0 +1,38 @@
+import { Module } from '@nestjs/common';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { ConfigModule } from '@nestjs/config';
+import { UsersModule } from './modules/users/users.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { AuthModule } from './modules/auth/auth.module';
+import { TouristAttractionsModule } from './modules/tourist-attractions/tourist-attractions.module';
+import { OpeningHoursModule } from './modules/opening-hours/opening-hours.module';
+import { EventsModule } from './modules/events/events.module';
+import { TicketsModule } from './modules/tickets/tickets.module';
+
+@Module({
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true
+    }),
+    TypeOrmModule.forRoot({
+      type: 'mysql',
+      host: process.env.DATABASE_HOST,
+      port: +process.env.DATABASE_PORT,
+      username: process.env.DATABASE_USERNAME,
+      password: process.env.DATABASE_PASSWORD,
+      database: process.env.DATABASE_DATABASE,
+      entities: ["dist/**/*.entity{.ts,.js}"],
+      synchronize: true,
+    }),
+    UsersModule,
+    AuthModule,
+    TouristAttractionsModule,
+    OpeningHoursModule,
+    EventsModule,
+    TicketsModule
+  ],
+  controllers: [AppController],
+  providers: [AppService],
+})
+export class AppModule {}
