@@ -1,17 +1,11 @@
-import { OpeningHour } from "src/modules/opening-hours/entities/opening-hour.entity";
-import { Ticket } from "src/modules/tickets/entities/ticket.entity";
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn, TableInheritance } from "typeorm";
+import { Column, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity()
 export class Location {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
     @Column('varchar', { length: 50 })
     name: string;
-
-    @OneToMany(() => OpeningHour, (openingHours) => openingHours.location)
-    openingHours: OpeningHour[];
 
     @Column('varchar', { length: 50 })
     address: string;
@@ -33,7 +27,4 @@ export class Location {
 
     @Column({type: 'simple-array'})
     images: Array<string>;
-
-    @OneToMany(() => Ticket, ticket => ticket.location)
-    tickets: Ticket[];
 }

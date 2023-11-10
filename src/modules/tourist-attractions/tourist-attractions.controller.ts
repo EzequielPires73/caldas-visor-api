@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { TouristAttractionsService } from './tourist-attractions.service';
 import { CreateTouristAttractionDto } from './dto/create-tourist-attraction.dto';
 import { UpdateTouristAttractionDto } from './dto/update-tourist-attraction.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { FindTouristAttractionDto } from './dto/find-tourist-attraction.dto';
 
 @ApiTags('tourist-attractions')
 @Controller('tourist-attractions')
@@ -15,8 +16,8 @@ export class TouristAttractionsController {
   }
 
   @Get()
-  findAll() {
-    return this.touristAttractionsService.findAll();
+  findAll(@Query() query: FindTouristAttractionDto) {
+    return this.touristAttractionsService.findAll(query);
   }
 
   @Get(':id')

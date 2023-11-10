@@ -35,8 +35,13 @@ export class CreateOpeningHourDto {
     })
     endTime: string;
 
-    @ApiProperty({
+    @ApiPropertyOptional({
         description: 'Inserir o id do evento ou ponto de turismo',
     })
-    locationId: number;
+    touristAttractionId?: string;
+    
+    @ApiPropertyOptional({
+        description: 'Inserir o id do evento ou ponto de turismo',
+    })
+    eventId?: string;
 }

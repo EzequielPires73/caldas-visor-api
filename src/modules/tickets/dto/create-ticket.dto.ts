@@ -18,10 +18,15 @@ export class CreateTicketDto {
         description: 'Insira o link de compra do ingresso',
         default: 'https://url-compra-ingresso.com.br'
     })
-    link: string;
+    link?: string;
 
-    @ApiProperty({
-        description: 'Inserir o id do evento ou ponto de turismo'
+    @ApiPropertyOptional({
+        description: 'Inserir o id do evento ou ponto de turismo',
     })
-    locationId: number;
+    touristAttractionId?: string;
+    
+    @ApiPropertyOptional({
+        description: 'Inserir o id do evento ou ponto de turismo',
+    })
+    eventId?: string;
 }

@@ -1,15 +1,55 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { DayOfWeek } from "src/enums/day-week.enum";
+import { TypeTicket } from "src/enums/type-ticket.enum";
 import { CreateOpeningHourDto } from "src/modules/opening-hours/dto/create-opening-hour.dto";
+import { CreateTicketDto } from "src/modules/tickets/dto/create-ticket.dto";
+
+const tickets: Array<CreateTicketDto> = [
+    {
+        link: '',
+        type: TypeTicket.inteira,
+        value: '50,00'
+    },
+    {
+        link: '',
+        type: TypeTicket.meia,
+        value: '25,00'
+    }
+]
+
+const openingHours: Array<CreateOpeningHourDto> = [
+    {
+        dayOfWeek: DayOfWeek.domingo,
+        endTime: '20:00',
+        startTime: '10:00',
+    },
+    {
+        dayOfWeek: DayOfWeek.sabado,
+        endTime: '20:00',
+        startTime: '10:00',
+    },
+]
 
 export class CreateLocationDto {
-    @ApiPropertyOptional()
     id?: string;
 
-    @ApiProperty()
+    @ApiProperty({
+        description: 'Insira o nome do ponto turistico ou evento',
+        default: 'Di Roma Aqua Parque'
+    })
     name: string;
 
-    @ApiPropertyOptional()
+    @ApiPropertyOptional({
+        type: Array<CreateOpeningHourDto>,
+        default: openingHours
+    })
     openingHours?: Array<CreateOpeningHourDto>;
+    
+    @ApiPropertyOptional({
+        type: Array<CreateLocationDto>,
+        default: tickets
+    })
+    tickets: Array<CreateTicketDto>;
 
     @ApiProperty({
         description: 'Insira o endereço',

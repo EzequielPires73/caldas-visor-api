@@ -1,6 +1,8 @@
 import { DayOfWeek } from "src/enums/day-week.enum";
 import { Location } from "src/entities/location.entity";
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { TouristAttraction } from "src/modules/tourist-attractions/entities/tourist-attraction.entity";
+import { Event } from "src/modules/events/entities/event.entity";
 
 @Entity()
 export class OpeningHour {
@@ -22,6 +24,9 @@ export class OpeningHour {
     @Column('time')
     endTime: string;
 
-    @ManyToOne(() => Location, (location) => location.openingHours, {nullable: false})
-    location: Location;
+    @ManyToOne(() => TouristAttraction, (touristAttraction) => touristAttraction.openingHours, {onDelete: 'CASCADE'})
+    touristAttraction: TouristAttraction;
+    
+    @ManyToOne(() => Event, event => event.openingHours, {onDelete: 'CASCADE'})
+    event: Event;
 }

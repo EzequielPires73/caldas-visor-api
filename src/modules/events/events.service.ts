@@ -1,11 +1,56 @@
 import { Injectable } from '@nestjs/common';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
+import { TicketsService } from '../tickets/tickets.service';
+import { OpeningHoursService } from '../opening-hours/opening-hours.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Event } from './entities/event.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class EventsService {
-  create(createEventDto: CreateEventDto) {
-    return 'This action adds a new event';
+  constructor(
+    @InjectRepository(Event) private repository: Repository<Event>,
+    private ticketsService: TicketsService,
+    private openingHoursService: OpeningHoursService
+  ) {}
+
+  async create(createEventDto: CreateEventDto) {
+    try {
+      const {openingHours, tickets, ...data} = createEventDto;
+      const event = await this.repository.save(data);
+
+      if(event && openingHours) {
+        for(let i = 0; i < openingHours.length; i++) {
+          await this.openingHoursService.create({
+            ...openingHours[i],
+            eventId: event.id
+          })
+        }
+      }
+      
+      if(event && tickets) {
+        for(let i = 0; i < tickets.length; i++) {
+          await this.ticketsService.create({
+            ...tickets[i],
+            eventId: event.id
+          })
+        }
+      }
+
+      return {
+        success: true,
+        result: await this.repository.findOne({
+          where: {id: event.id},
+          relations: ['openingHours', 'tickets']
+        })
+      }
+    } catch (error) {
+      return {
+        success: false,
+        message: error.message
+      }
+    }
   }
 
   findAll() {
