@@ -9,6 +9,8 @@ import { TouristAttractionsModule } from './modules/tourist-attractions/tourist-
 import { OpeningHoursModule } from './modules/opening-hours/opening-hours.module';
 import { EventsModule } from './modules/events/events.module';
 import { TicketsModule } from './modules/tickets/tickets.module';
+import { GoogleMapsService } from './services/google-maps.service';
+import { AddressModule } from './modules/address/address.module';
 
 @Module({
   imports: [
@@ -30,9 +32,10 @@ import { TicketsModule } from './modules/tickets/tickets.module';
     TouristAttractionsModule,
     OpeningHoursModule,
     EventsModule,
-    TicketsModule
+    TicketsModule,
+    AddressModule
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, GoogleMapsService],
 })
 export class AppModule {}
