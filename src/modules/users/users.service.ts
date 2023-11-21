@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { TypeUser } from 'src/enums/type-user.enum';
+import { hashSync } from 'bcrypt';
 
 @Injectable()
 export class UsersService {
@@ -15,7 +16,7 @@ export class UsersService {
   async create(createUserDto: CreateUserDto) {
     try {
       //Verifica se usuário com o email informado já existe
-      const userAlreadyExists = await this.repository.findOneBy({email: createUserDto.email});
+      const userAlreadyExists = await this.repository.findOneBy({ email: createUserDto.email });
       if (userAlreadyExists) throw new Error(`Usuário com o email ${createUserDto.email} já existe`);
 
       //Verifica se o tipo de usuário é diferente de admin e que o tipo de usuário existe
@@ -42,7 +43,20 @@ export class UsersService {
     try {
       return {
         success: true,
-        results: await this.repository.find({ select: { id: true, name: true, email: true, type: true} })
+        results: await this.repository.find({
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            type: true,
+            address: true,
+            cep: true,
+            city: true,
+            companyDocument: true,
+            companyName: true,
+            state: true
+          }
+        })
       }
     } catch (error) {
       return {
@@ -54,8 +68,22 @@ export class UsersService {
 
   async findOne(id: string) {
     try {
-      const userAlreadyExists = await this.repository.findOne({where: {id} , select: { id: true, name: true, email: true, type: true} });
-      if(!userAlreadyExists) throw new Error('Usuário não existe');
+      const userAlreadyExists = await this.repository.findOne({
+        where: { id },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          type: true,
+          address: true,
+          cep: true,
+          city: true,
+          companyDocument: true,
+          companyName: true,
+          state: true
+        }
+      });
+      if (!userAlreadyExists) throw new Error('Usuário não existe');
 
       return {
         success: true,
@@ -68,11 +96,11 @@ export class UsersService {
       }
     }
   }
-  
+
   async findOneByEmail(email: string) {
     try {
-      const userAlreadyExists = await this.repository.findOneBy({email});
-      if(!userAlreadyExists) return null;
+      const userAlreadyExists = await this.repository.findOneBy({ email });
+      if (!userAlreadyExists) return null;
 
       return userAlreadyExists
     } catch (error) {
@@ -85,14 +113,35 @@ export class UsersService {
       if (updateUserDto.type && updateUserDto.type == TypeUser.admin) throw new Error('Você não tem permissão para criar esse tipo de usuário');
       if (updateUserDto.type && !TypeUser[updateUserDto.type]) throw new Error(`Tipo de usuário ${updateUserDto.type} não existe`);
 
-      const userAlreadyExists = await this.repository.findOne({where: {id} , select: { id: true, name: true, email: true, type: true} });
-      if(!userAlreadyExists) throw new Error('Usuário não existe');
+      const userAlreadyExists = await this.repository.findOne({ where: { id }, select: { id: true, name: true, email: true, type: true } });
+      if (!userAlreadyExists) throw new Error('Usuário não existe');
 
       await this.repository.update(id, updateUserDto);
 
       return {
         success: true,
-        result: await this.repository.findOne({where: {id} , select: { id: true, name: true, email: true, type: true} })
+        result: await this.repository.findOne({ where: { id }, select: { id: true, name: true, email: true, type: true } })
+      }
+    } catch (error) {
+      return {
+        success: false,
+        message: error.message
+      }
+    }
+  }
+
+  async updatePassword(id: string, password: string) {
+    try {
+      const userAlreadyExists = await this.repository.findOne({ where: { id }, select: { id: true, name: true, email: true, type: true } });
+      if (!userAlreadyExists) throw new Error('Usuário não existe');
+
+      const passwordHash = hashSync(password, 10);
+
+      await this.repository.update(id, {password: passwordHash});
+
+      return {
+        success: true,
+        result: await this.repository.findOne({ where: { id }, select: { id: true, name: true, email: true, type: true } })
       }
     } catch (error) {
       return {
@@ -104,8 +153,8 @@ export class UsersService {
 
   async remove(id: string) {
     try {
-      const userAlreadyExists = await this.repository.findOne({where: {id} , select: { id: true, name: true, email: true, type: true} });
-      if(!userAlreadyExists) throw new Error('Usuário não existe');
+      const userAlreadyExists = await this.repository.findOne({ where: { id }, select: { id: true, name: true, email: true, type: true } });
+      if (!userAlreadyExists) throw new Error('Usuário não existe');
 
       await this.repository.delete(id);
 

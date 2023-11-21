@@ -11,6 +11,7 @@ import { EventsModule } from './modules/events/events.module';
 import { TicketsModule } from './modules/tickets/tickets.module';
 import { GoogleMapsService } from './services/google-maps.service';
 import { AddressModule } from './modules/address/address.module';
+import { TokensModule } from './modules/tokens/tokens.module';
 
 @Module({
   imports: [
@@ -33,7 +34,8 @@ import { AddressModule } from './modules/address/address.module';
     OpeningHoursModule,
     EventsModule,
     TicketsModule,
-    AddressModule
+    AddressModule,
+    TokensModule
   ],
   controllers: [AppController],
   providers: [AppService, GoogleMapsService],

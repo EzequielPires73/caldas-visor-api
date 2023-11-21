@@ -1,6 +1,7 @@
 import { hashSync } from "bcrypt";
 import { TypeUser } from "src/enums/type-user.enum";
-import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn, Unique } from "typeorm";
+import { Token } from "src/modules/tokens/entities/token.entity";
+import { BeforeInsert, Column, Entity, OneToMany, PrimaryGeneratedColumn, Unique } from "typeorm";
 
 @Entity()
 @Unique(['email'])
@@ -19,6 +20,27 @@ export class User {
 
     @Column({type: 'simple-enum', enum: TypeUser, default: TypeUser.customer})
     type: TypeUser;
+
+    @Column({nullable: true})
+    companyName: string;
+
+    @Column({nullable: true})
+    companyDocument: string;
+
+    @Column({nullable: true})
+    cep: string;
+
+    @Column({nullable: true})
+    state: string;
+
+    @Column({nullable: true})
+    city: string;
+
+    @Column({nullable: true})
+    address: string;
+
+    @OneToMany(() => Token, token => token.user)
+    tokens: Token[]
 
     @BeforeInsert()
     hashPassword() {
