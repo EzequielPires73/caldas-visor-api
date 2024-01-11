@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
@@ -12,6 +12,7 @@ import { TicketsModule } from './modules/tickets/tickets.module';
 import { GoogleMapsService } from './services/google-maps.service';
 import { AddressModule } from './modules/address/address.module';
 import { TokensModule } from './modules/tokens/tokens.module';
+import { OrganizerMiddleware } from './middlewares/organizer.middleware';
 
 @Module({
   imports: [

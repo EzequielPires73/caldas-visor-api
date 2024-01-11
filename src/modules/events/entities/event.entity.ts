@@ -1,7 +1,8 @@
 import { Location } from "src/entities/location.entity";
 import { OpeningHour } from "src/modules/opening-hours/entities/opening-hour.entity";
 import { Ticket } from "src/modules/tickets/entities/ticket.entity";
-import { Column, Entity, OneToMany } from "typeorm";
+import { User } from "src/modules/users/entities/user.entity";
+import { Column, Entity, ManyToOne, OneToMany } from "typeorm";
 
 @Entity()
 export class Event extends Location {
@@ -13,4 +14,7 @@ export class Event extends Location {
 
     @OneToMany(() => OpeningHour, openingHours => openingHours.event)
     openingHours: OpeningHour[];
+
+    @ManyToOne(() => User, user => user.events, {nullable: false})
+    organizer: User;
 }

@@ -1,5 +1,6 @@
 import { hashSync } from "bcrypt";
 import { TypeUser } from "src/enums/type-user.enum";
+import { Event } from "src/modules/events/entities/event.entity";
 import { Token } from "src/modules/tokens/entities/token.entity";
 import { BeforeInsert, Column, Entity, OneToMany, PrimaryGeneratedColumn, Unique } from "typeorm";
 
@@ -41,6 +42,9 @@ export class User {
 
     @OneToMany(() => Token, token => token.user)
     tokens: Token[]
+
+    @OneToMany(() => Event, event => event.organizer)
+    events: [];
 
     @BeforeInsert()
     hashPassword() {

@@ -39,8 +39,15 @@ export class TicketsService {
     }
   }
 
-  findAll() {
-    return `This action returns all tickets`;
+  async findAll() {
+    try {
+      return await this.repository.find();
+    } catch (error) {
+      return {
+        success: false,
+        message: error.message
+      }
+    }
   }
 
   findOne(id: number) {

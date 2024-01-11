@@ -6,6 +6,7 @@ import { OpeningHoursService } from '../opening-hours/opening-hours.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Event } from './entities/event.entity';
 import { Repository } from 'typeorm';
+import { User } from '../users/entities/user.entity';
 
 @Injectable()
 export class EventsService {
@@ -15,10 +16,10 @@ export class EventsService {
     private openingHoursService: OpeningHoursService
   ) {}
 
-  async create(createEventDto: CreateEventDto) {
+  async create(createEventDto: CreateEventDto, user: User) {
     try {
       const {openingHours, tickets, ...data} = createEventDto;
-      const event = await this.repository.save(data);
+      const event = await this.repository.save({...data, organizer: user});
 
       if(event && openingHours) {
         for(let i = 0; i < openingHours.length; i++) {
@@ -42,7 +43,7 @@ export class EventsService {
         success: true,
         result: await this.repository.findOne({
           where: {id: event.id},
-          relations: ['openingHours', 'tickets']
+          relations: ['openingHours', 'tickets', 'organizer']
         })
       }
     } catch (error) {
@@ -53,12 +54,34 @@ export class EventsService {
     }
   }
 
-  findAll() {
-    return `This action returns all events`;
+  async findAll() {
+    try {
+      return await this.repository.find({
+        relations: ['openingHours', 'tickets', 'organizer'],
+        select: {
+          organizer: {
+            name: true,
+            email: true,
+          }
+        }
+      });
+    } catch (error) {
+      return {
+        success: false,
+        message: error.message
+      }
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} event`;
+  async findOne(id: string) {
+    try {
+      return await this.repository.findOne({where: {id}, relations: ['openingHours', 'tickets', 'organizer']});
+    } catch (error) {
+      return {
+        success: false,
+        message: error.message
+      }
+    }
   }
 
   update(id: number, updateEventDto: UpdateEventDto) {
